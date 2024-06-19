@@ -17,7 +17,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GLogger"
+	"github.com/xInitialization/xLogger/GLogger"
 	"go.uber.org/zap"
 )
 

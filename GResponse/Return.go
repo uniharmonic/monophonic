@@ -12,7 +12,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GLogger"
+	"github.com/xInitialization/xLogger/GLogger"
 )
 
 // TagReturn 定义日志标签，用于标记返回相关的日志条目。

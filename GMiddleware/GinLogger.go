@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GLogger"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GResponse"
+	"github.com/xInitialization/xLogger/GLogger"
+	"github.com/xInitialization/xLogger/GResponse"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

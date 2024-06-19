@@ -15,7 +15,7 @@
 ```go
 package main
 
-import "github.com/xInitialization/xBackstage/internal/pkg/xLogger/GLogger"
+import "github.com/xInitialization/xLogger/GLogger"
 
 func main() {
 	GLogger.Logger.Debug("Hello World")
@@ -33,7 +33,7 @@ package bootstrap
 
 import (
 	"github.com/xInitialization/xBackstage/configs"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GLogger"
+	"github.com/xInitialization/xLogger/GLogger"
 	"path"
 )
 
@@ -79,7 +79,7 @@ package Login
 import (
 	"fmt"
 	"github.com/xInitialization/xBackstage/internal/pkg/Utils"
-	"github.com/xInitialization/xBackstage/internal/pkg/xLogger/GResponse"
+	"github.com/xInitialization/xLogger/GResponse"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
