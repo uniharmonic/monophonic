@@ -1,18 +1,10 @@
-package GResponse
-
-/**
- * @File:   Return.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 11:17 PM
- * @Create       easternday 2024-06-19 11:17 PM
- * @Update       easternday 2024-06-19 11:17 PM
- */
+package response
 
 import (
+	"github.com/xenochrony/xylitol"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xLogger/GLogger"
 )
 
 // TagReturn 定义日志标签，用于标记返回相关的日志条目。
@@ -31,7 +23,7 @@ func Error(c *gin.Context, code int, err error, msg string) {
 	// 克隆默认响应对象以复用
 	res := DefaultReturn.Clone()
 	res.Success(false)                                // 标记响应为失败
-	res.SetTraceID(GLogger.Default.GenerateTraceId()) // 设置追踪ID
+	res.SetTraceID(xylitol.Default.GenerateTraceId()) // 设置追踪ID
 	res.SetCode(int32(code))                          // 设置错误代码
 	res.SetMsg(msg)                                   // 设置错误消息
 	res.SetInfo(msg)                                  // 设置附加信息（与msg相同，可根据实际情况调整）
@@ -39,7 +31,7 @@ func Error(c *gin.Context, code int, err error, msg string) {
 		res.SetInfo(err.Error())
 	}
 	// 记录错误日志
-	GLogger.Default.Error(TagReturn+c.FullPath(), res.GetFields()...)
+	xylitol.Default.Error(TagReturn+c.FullPath(), res.GetFields()...)
 	// 将响应对象放入上下文中
 	c.Set("result", res)
 	// 向客户端发送错误响应并终止后续中间件处理
@@ -55,13 +47,13 @@ func OK(c *gin.Context, data any, msg string) {
 	// 克隆默认响应对象
 	res := DefaultReturn.Clone()
 	res.Success(true)                                 // 标记响应为成功
-	res.SetTraceID(GLogger.Default.GenerateTraceId()) // 设置追踪ID
+	res.SetTraceID(xylitol.Default.GenerateTraceId()) // 设置追踪ID
 	res.SetCode(http.StatusOK)                        // 设置状态码为200
 	res.SetMsg(msg)                                   // 设置成功消息
 	res.SetInfo(msg)                                  // 设置附加信息（与msg相同，可根据实际情况调整）
 	res.SetData(data)                                 // 设置响应数据
 	// 记录成功日志
-	GLogger.Default.Info(TagReturn+c.FullPath(), res.GetFields()...)
+	xylitol.Default.Info(TagReturn+c.FullPath(), res.GetFields()...)
 	// 将响应对象放入上下文中
 	c.Set("result", res)
 	// 向客户端发送成功响应并终止后续中间件处理

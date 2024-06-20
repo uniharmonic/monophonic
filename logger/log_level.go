@@ -1,12 +1,4 @@
-package GLogger
-
-/**
- * @File:   LogLevel.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 10:55 PM
- * @Create       easternday 2024-06-19 10:55 PM
- * @Update       easternday 2024-06-19 10:55 PM
- */
+package logger
 
 import "go.uber.org/zap/zapcore"
 

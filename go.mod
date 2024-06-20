@@ -1,4 +1,4 @@
-module github.com/xInitialization/xLogger
+module github.com/xenochrony/xylitol
 
 go 1.22.4
 

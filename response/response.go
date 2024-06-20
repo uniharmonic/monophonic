@@ -1,12 +1,4 @@
-package GResponse
-
-/**
- * @File:   Response.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 11:04 PM
- * @Create       easternday 2024-06-19 11:04 PM
- * @Update       easternday 2024-06-19 11:04 PM
- */
+package response
 
 import (
 	"go.uber.org/zap"

@@ -1,23 +1,16 @@
-package GMiddleware
-
-/**
- * @File:   GinLogger.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 11:16 PM
- * @Create       easternday 2024-06-19 11:16 PM
- * @Update       easternday 2024-06-19 11:16 PM
- */
+package middleware
 
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/xenochrony/xylitol"
 	"io"
 	"strings"
 	"time"
 
+	"github.com/xenochrony/xylitol/response"
+
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xLogger/GLogger"
-	"github.com/xInitialization/xLogger/GResponse"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -32,7 +25,7 @@ const maxMemory = 32 << 20 // 32MB
 // 每当请求到达时，此中间件会先记录请求的初步信息。
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		GLogger.Default.Info(TagDefault+c.FullPath(), GetFields(c)...)
+		xylitol.Default.Info(TagDefault+c.FullPath(), GetFields(c)...)
 	}
 }
 
@@ -48,7 +41,7 @@ func GetFields(c *gin.Context) []zapcore.Field {
 
 	// 尝试从上下文中提取并添加追踪ID
 	if res, ok := c.Get("result"); ok && res != nil {
-		traceID := res.(*GResponse.Response).TraceID
+		traceID := res.(*response.Response).TraceID
 		fields = append(fields, zap.String("traceId", traceID))
 	}
 

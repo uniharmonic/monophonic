@@ -1,4 +1,8 @@
-# xLogger 模块
+<img  align="right" src="https://avatars.githubusercontent.com/u/168158486?s=200&v=4" height="200" alt="logo"/>
+
+[![Xylitol](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&size=64&pause=1000&center=false&vCenter=true&random=false&width=435&height=200&lines=:=>+Xylitol+<=:)](https://github.com/Xylitol)
+
+# Xylitol | 木糖醇
 
 本文档综合介绍了`GLogger`、`GMiddleware`及`GResponse`三个包的整合应用，旨在提升Go项目的日志管理和HTTP响应处理能力，确保服务的健壮性和可观察性。
 
@@ -15,7 +19,7 @@
 ```go
 package main
 
-import "github.com/xInitialization/xLogger/GLogger"
+import "github.com/xenochrony/xylitol/GLogger"
 
 func main() {
 	GLogger.Logger.Debug("Hello World")
@@ -32,8 +36,8 @@ func main() {
 package bootstrap
 
 import (
-	"github.com/xInitialization/xBackstage/configs"
-	"github.com/xInitialization/xLogger/GLogger"
+	"github.com/xenochrony/xBackstage/configs"
+	"github.com/xenochrony/xylitol/GLogger"
 	"path"
 )
 
@@ -78,14 +82,14 @@ package Login
 
 import (
 	"fmt"
-	"github.com/xInitialization/xBackstage/internal/pkg/Utils"
-	"github.com/xInitialization/xLogger/GResponse"
+	"github.com/xenochrony/xBackstage/internal/pkg/Utils"
+	"github.com/xenochrony/xylitol/GResponse"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xBackstage/internal/app/bootstrap"
-	"github.com/xInitialization/xBackstage/internal/app/common/sys/User"
-	"github.com/xInitialization/xBackstage/internal/app/services"
+	"github.com/xenochrony/xBackstage/internal/app/bootstrap"
+	"github.com/xenochrony/xBackstage/internal/app/common/sys/User"
+	"github.com/xenochrony/xBackstage/internal/app/services"
 )
 
 func Login(c *gin.Context) {

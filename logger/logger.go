@@ -1,19 +1,10 @@
-package GLogger
-
-/**
- * @File:   Logger.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 10:55 PM
- * @Create       easternday 2024-06-19 10:55 PM
- * @Update       easternday 2024-06-19 10:55 PM
- */
+package logger
 
 import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 /*
@@ -35,13 +26,13 @@ LogInterface 接口定义了一套日志操作方法，
     丰富日志内容，提高日志的可读性和分析便利性。
 */
 type LogInterface interface {
-	GenerateTraceId() string // 生成一个用于日志追踪的唯一ID。
-
+	GenerateTraceId() string                   // 生成一个用于日志追踪的唯一ID。
 	Debug(msg string, fields ...zapcore.Field) // 记录调试日志。
 	Info(msg string, fields ...zapcore.Field)  // 记录信息日志。
 	Warn(msg string, fields ...zapcore.Field)  // 记录警告日志。
 	Error(msg string, fields ...zapcore.Field) // 记录错误日志。
 	Fatal(msg string, fields ...zapcore.Field) // 记录致命错误日志后终止程序。
+	SetLogLevel(level string)                  // 设置日志级别。
 }
 
 /*
@@ -59,46 +50,7 @@ type GLogger struct {
 	LogLevel  logger.LogLevel // 当前日志记录的最低级别门槛。
 }
 
-// Default 是一个默认初始化的 GLogger 实例，方便全局访问。
-var Default = New("debug", "tmp/run.log")
-
-// New 初始化并返回一个新的 Ginebra 日志实例。
-// 此函数根据配置设置日志级别、路径以及输出目的地（控制台和/或文件）。
-// 适合在应用程序启动时调用，以配置整个应用的日志行为。
-//
-// @Description:
-//
-//	初始化日志模块，配置日志级别、输出格式及存储位置。
-//
-// @Return *GLogger: 返回配置好的 GLogger 实例，可用于日志记录。
-// TODO: 考虑后期日志输出级别从环境变量中获取，以及动态配置日志级别
-func New(level string, logfile string) *GLogger {
-	// 从配置中获取日志级别和路径信息
-	logLevel := GetLogLevel(level)
-	logPath := logfile
-
-	// 配置日志编码器，用于格式化输出到控制台的日志
-	encoder := getEncoder()
-
-	// 准备文件写入器，用于将日志记录到指定文件
-	fileWriteSyncer := getFileLogWriter(logPath)
-
-	// 设置日志核心，允许同时输出到控制台和文件，根据环境调整此逻辑
-	core := zapcore.NewTee(
-		// 注意：生产环境中应考虑移除或调整控制台输出
-		zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), logLevel),
-		zapcore.NewCore(encoder, fileWriteSyncer, logLevel),
-	)
-
-	// 创建并返回 GLogger 实例，其中包含日志级别信息及 zap.Logger 的封装
-	// 添加 zap.AddCaller 和 zap.AddCallerSkip 以便在日志中记录调用者信息
-	return &GLogger{
-		ZapLogger: zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2)),
-		LogLevel:  logger.LogLevel(logLevel),
-	}
-}
-
-// getEncoder 创建并返回一个zapcore.Encoder，用于格式化日志输出至控制台。
+// GetEncoder 创建并返回一个zapcore.Encoder，用于格式化日志输出至控制台。
 // 该函数配置了日志的显示样式，包括时间格式、日志级别颜色高亮以及完整的调用者信息。
 //
 // @Description:
@@ -106,7 +58,7 @@ func New(level string, logfile string) *GLogger {
 //	初始化控制台日志编码器，定制日志输出格式，包括时间、级别颜色及调用者信息。
 //
 // @Return zapcore.Encoder: 返回配置好的控制台日志编码器实例。
-func getEncoder() zapcore.Encoder {
+func GetEncoder() zapcore.Encoder {
 	// 使用zap的生产环境默认配置作为基础
 	encoderConfig := zap.NewProductionEncoderConfig()
 
@@ -124,12 +76,12 @@ func getEncoder() zapcore.Encoder {
 	return zapcore.NewConsoleEncoder(encoderConfig)
 }
 
-// getFileLogWriter 根据给定的文件路径创建并返回一个实现了 zapcore.WriteSyncer 接口的对象，
+// GetFileLogWriter 根据给定的文件路径创建并返回一个实现了 zapcore.WriteSyncer 接口的对象，
 // 用于日志文件的写入与同步。使用 lumberjack 库来支持日志文件的滚动、压缩和清理。
 //
 // @param logPath string: 日志文件的保存路径。
 // @return zapcore.WriteSyncer: 返回配置好的日志文件写入器。
-func getFileLogWriter(logPath string) zapcore.WriteSyncer {
+func GetFileLogWriter(logPath string) zapcore.WriteSyncer {
 	// lumberjack.Logger 配置：
 	// - Filename: 日志文件名
 	// - MaxSize: 单个日志文件最大大小，默认单位为MB
@@ -181,4 +133,8 @@ func (log *GLogger) Error(msg string, fields ...zapcore.Field) {
 // @param fields ...zapcore.Field: 额外的结构化日志字段。
 func (log *GLogger) Fatal(msg string, fields ...zapcore.Field) {
 	log.ZapLogger.Fatal(msg, fields...)
+}
+
+func (log *GLogger) SetLogLevel(level string) {
+	// TODO: 动态调整输出级别
 }

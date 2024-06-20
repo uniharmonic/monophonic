@@ -1,14 +1,7 @@
-package GMiddleware
-
-/**
- * @File:   GinRecovery.go
- * @Author: easternday <easterNday@foxmail.com>
- * @Date:   6/19/24 11:16 PM
- * @Create       easternday 2024-06-19 11:16 PM
- * @Update       easternday 2024-06-19 11:16 PM
- */
+package middleware
 
 import (
+	"github.com/xenochrony/xylitol"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -17,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/xInitialization/xLogger/GLogger"
 	"go.uber.org/zap"
 )
 
@@ -49,7 +41,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 
 				if brokenPipe {
 					// 对于断开的连接，仅记录错误和请求信息，不尝试写入响应状态
-					GLogger.Default.Error(c.Request.URL.Path,
+					xylitol.Default.Error(c.Request.URL.Path,
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
@@ -66,7 +58,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 				if stack {
 					logFields = append(logFields, zap.String("stack", string(debug.Stack())))
 				}
-				GLogger.Default.Error("[Recovery from panic]", logFields...)
+				xylitol.Default.Error("[Recovery from panic]", logFields...)
 
 				// 终止当前请求并返回内部服务器错误状态码
 				c.AbortWithStatus(http.StatusInternalServerError)
