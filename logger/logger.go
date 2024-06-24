@@ -4,7 +4,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"gorm.io/gorm/logger"
+	"os"
 )
 
 /*
@@ -46,8 +46,9 @@ GLogger 结构体封装了日志功能，集成 zap.Logger 提供高性能日志
     允许动态调整以适应不同的运行环境（如生产、开发）对日志详略的需求。
 */
 type GLogger struct {
-	ZapLogger *zap.Logger     // zap 日志库的实例，负责实际的日志处理工作。
-	LogLevel  logger.LogLevel // 当前日志记录的最低级别门槛。
+	ZapLogger *zap.Logger // zap 日志库的实例，负责实际的日志处理工作。
+	LogLevel  string      // 当前日志记录的最低级别门槛。
+	LogPath   string      // 日志路径
 }
 
 // GetEncoder 创建并返回一个zapcore.Encoder，用于格式化日志输出至控制台。
@@ -136,5 +137,24 @@ func (log *GLogger) Fatal(msg string, fields ...zapcore.Field) {
 }
 
 func (log *GLogger) SetLogLevel(level string) {
-	// TODO: 动态调整输出级别
+	log.LogLevel = level
+
+	// 从配置中获取日志级别和路径信息
+	logLevel := GetLogLevel(log.LogLevel)
+	logPath := log.LogPath
+
+	// 配置日志编码器，用于格式化输出到控制台的日志
+	encoder := GetEncoder()
+
+	// 准备文件写入器，用于将日志记录到指定文件
+	fileWriteSyncer := GetFileLogWriter(logPath)
+
+	// 设置日志核心，允许同时输出到控制台和文件，根据环境调整此逻辑
+	core := zapcore.NewTee(
+		// 注意：生产环境中应考虑移除或调整控制台输出
+		zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), logLevel),
+		zapcore.NewCore(encoder, fileWriteSyncer, logLevel),
+	)
+
+	log.ZapLogger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
 }

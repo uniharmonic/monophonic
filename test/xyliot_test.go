@@ -10,6 +10,9 @@ import (
 	"github.com/xenochrony/xylitol/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"path"
@@ -92,4 +95,52 @@ func TestXylitolWithMiddlewareAndResponse(t *testing.T) {
 	res1 := httptest.NewRecorder()
 	req1, _ := http.NewRequestWithContext(ctx, "GET", testPath, nil)
 	engine.ServeHTTP(res1, req1)
+}
+
+func TestXylitolWithGORM(t *testing.T) {
+	xylitol.Default = xylitol.New("debug", "tmp/run.log")
+
+	// 测试报错
+	db, err := gorm.Open(mysql.Open("user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"), middleware.GetGormConfig("debug"))
+
+	// 测试不报错
+	db, err = gorm.Open(sqlite.Open("gorm.db"), middleware.GetGormConfig("error"))
+	type Product struct {
+		gorm.Model
+		Code  string
+		Price uint
+	}
+	if err != nil {
+		xylitol.Default.Error(err.Error())
+	}
+	// 迁移 schema
+	err = db.AutoMigrate(&Product{})
+	if err != nil {
+		xylitol.Default.Fatal(err.Error())
+	}
+
+	// Create
+	db.Create(&Product{Code: "D42", Price: 100})
+
+	// Read
+	var product Product
+
+	db.First(&product, "code = ?", "D43")   // 查找不存在的值
+	db.Model(&product).Update("Price", 200) // 对不存在的记录进行更新
+	// 更新多个不存在字段
+	db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // 仅更新非零值字段
+	db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+	// Delete - 删除 product
+	db.Delete(&product, 1)
+
+	db.First(&product, "code = ?", "D42") // 查找 code 字段值为 D42 的记录
+	// Update - 将 product 的 price 更新为 200
+	db.Model(&product).Update("Price", 200)
+	// Update - 更新多个字段
+	db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // 仅更新非零值字段
+	db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+
+	// Delete - 删除 product
+	db.Delete(&product, 1)
+
 }

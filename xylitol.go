@@ -4,7 +4,6 @@ import (
 	"github.com/xenochrony/xylitol/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	logger2 "gorm.io/gorm/logger"
 	"os"
 )
 
@@ -43,7 +42,7 @@ func New(level string, logfile string) *logger.GLogger {
 	// 添加 zap.AddCaller 和 zap.AddCallerSkip 以便在日志中记录调用者信息
 	return &logger.GLogger{
 		ZapLogger: zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2)),
-		// TODO: 这里还需要修改
-		LogLevel: logger2.LogLevel(logLevel),
+		LogLevel:  level,
+		LogPath:   logPath,
 	}
 }
