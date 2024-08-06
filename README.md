@@ -188,3 +188,7 @@ db, err = gorm.Open(sqlite.Open("gorm.db"), middleware.GetGormConfig("error"))
 	- [ ] 优化错误处理逻辑，使`Msg`字段传达用户友好信息，而`Info`字段提供详细错误堆栈。
 - [ ] 在错误恢复逻辑中引入更精细的错误分类处理，优化日志记录策略。
 - [ ] 优化单元测试，确保每个功能模块的测试覆盖率达到100%。
+
+## Credits
+
+- [Gin + Gorm使用 Zap 做日志记录](https://www.majingzhen.com/article/16)
