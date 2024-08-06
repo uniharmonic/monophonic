@@ -1,7 +1,7 @@
-package xylitol
+package monophonic
 
 import (
-	"github.com/xenochrony/xylitol/logger"
+	"github.com/uniharmonic/monophonic/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

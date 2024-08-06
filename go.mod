@@ -1,4 +1,4 @@
-module github.com/xenochrony/xylitol
+module github.com/uniharmonic/monophonic
 
 go 1.22.4
 

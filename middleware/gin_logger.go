@@ -3,12 +3,12 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/xenochrony/xylitol"
+	"github.com/uniharmonic/monophonic"
 	"io"
 	"strings"
 	"time"
 
-	"github.com/xenochrony/xylitol/response"
+	"github.com/uniharmonic/monophonic/response"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -25,7 +25,7 @@ const maxMemory = 32 << 20 // 32MB
 // 每当请求到达时，此中间件会先记录请求的初步信息。
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		xylitol.Default.Info(TagDefault+c.FullPath(), GetFields(c)...)
+		monophonic.Default.Info(TagDefault+c.FullPath(), GetFields(c)...)
 	}
 }
 

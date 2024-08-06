@@ -1,8 +1,8 @@
 <img  align="right" src="https://avatars.githubusercontent.com/u/168158486?s=200&v=4" height="200" alt="logo"/>
 
-[![Xylitol](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&size=64&pause=1000&center=false&vCenter=true&random=false&width=435&height=200&lines=:=>+Xylitol+<=:)](https://github.com/Xylitol)
+[![monophonic](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&size=64&pause=1000&center=false&vCenter=true&random=false&width=435&height=200&lines=:=>+monophonic+<=:)](https://github.com/uniharmonic/monophonic)
 
-# Xylitol | 木糖醇
+# Monophonic | 单声道
 
 本文档综合介绍了`GLogger`、`GMiddleware`及`GResponse`三个包的整合应用，旨在提升
 Go 项目的日志管理和 HTTP 响应处理能力，确保服务的健壮性和可观察性。
@@ -32,9 +32,9 @@ package bootstrap
 import (
 	"path"
 
-	"github.com/xenochrony/xerography/configs"
-	"github.com/xenochrony/xylitol"
-	"github.com/xenochrony/xylitol/logger"
+	"github.com/uniharmonic/xerography/configs"
+	"github.com/uniharmonic/monophonic"
+	"github.com/uniharmonic/monophonic/logger"
 )
 
 var Logger logger.LogInterface
@@ -43,30 +43,30 @@ func InitializeLogger() {
 	// 此处可以修改为你自己对应的日志文件配置，例如从环境变量或者配置文件进行读取
 	loglevel := "Info"
 	logfile := "./tmp/run.log"
-	// 此处使用 Logger 来进行日志管理，实际上你仍然可以使用 xylitol.Default 来进行日志管理
-	Logger = xylitol.New(loglevel, logfile)
-	xylitol.Default = Logger.(*logger.GLogger)
+	// 此处使用 Logger 来进行日志管理，实际上你仍然可以使用 monophonic.Default 来进行日志管理
+	Logger = monophonic.New(loglevel, logfile)
+	monophonic.Default = Logger.(*logger.GLogger)
 }
 ```
 
 #### 输出日志
 
-如果您需要手动输出某些日志，您可以使用`xylitol.Default`来输出日志。
+如果您需要手动输出某些日志，您可以使用`monophonic.Default`来输出日志。
 
 默认的输出级别有`Debug`、`Info`、`Warn`、`Error`和`Fatal`五个级别。
 
 ```go
 package main
 
-import "github.com/xenochrony/xylitol"
+import "github.com/uniharmonic/monophonic"
 
 func main() {
-	xylitol.Default.Debug("This is a log test for DEBUG level")
-	xylitol.Default.Info("This is a log test for INFO level")
-	xylitol.Default.Warn("This is a log test for WARN level")
-	xylitol.Default.Error("This is a log test for ERROR level")
+	monophonic.Default.Debug("This is a log test for DEBUG level")
+	monophonic.Default.Info("This is a log test for INFO level")
+	monophonic.Default.Warn("This is a log test for WARN level")
+	monophonic.Default.Error("This is a log test for ERROR level")
 	// Fatal 会导致程序退出
-	xylitol.Default.Fatal("This is a log test for FATAL level")
+	monophonic.Default.Fatal("This is a log test for FATAL level")
 }
 ```
 
@@ -77,7 +77,7 @@ func main() {
 除了一开始进行日志级别的初始化外，您还可以通过`GLogger.SetLogLevel`函数动态调整日志级别。
 
 ```go
-xylitol.Default.SetLogLevel("Info")	// Info, Warn, Error, Fatal, Debug 均可（不区分大小写）
+monophonic.Default.SetLogLevel("Info")	// Info, Warn, Error, Fatal, Debug 均可（不区分大小写）
 ```
 
 ## Middleware（中间件）
@@ -110,7 +110,7 @@ package xgin
 
 import (
 	"fmt"
-	"github.com/xenochrony/xylitol/middleware"
+	"github.com/uniharmonic/monophonic/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -158,7 +158,7 @@ func main() {
 }
 ```
 
-> 此处日志记录会使用`xylitol.Default`来记录日志，因此你需要在初始化时设置默认日志记录器`xylitol.Default`为你自定义的日志记录器。
+> 此处日志记录会使用`monophonic.Default`来记录日志，因此你需要在初始化时设置默认日志记录器`monophonic.Default`为你自定义的日志记录器。
 
 ### GORM 中间件
 
@@ -169,11 +169,11 @@ func main() {
 ```go
 // 其中 error 是 GORM 的配置选项，用于控制错误日志的记录级别。
 // Info, Warn, Error, Fatal, Debug 均可（不区分大小写）。
-// 实质上是调用了 xylitol.Default.SetLogLevel 方法来设置日志级别。
+// 实质上是调用了 monophonic.Default.SetLogLevel 方法来设置日志级别。
 db, err = gorm.Open(sqlite.Open("gorm.db"), middleware.GetGormConfig("error"))
 ```
 
-> 因为此处实质上是调用了 xylitol.Default.SetLogLevel 方法来设置日志级别，因此需要在初始化时设置默认日志记录器`xylitol.Default`为你自定义的日志记录器。
+> 因为此处实质上是调用了 monophonic.Default.SetLogLevel 方法来设置日志级别，因此需要在初始化时设置默认日志记录器`monophonic.Default`为你自定义的日志记录器。
 > 同时这样做实际上并不是真的修改了 GORM 的日志记录器，而是只是修改了默认的日志记录器导致其输出不显示而已，因此对于性能会有一定影响。
 
 ## 待优化事项

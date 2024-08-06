@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/xenochrony/xylitol"
+	"github.com/uniharmonic/monophonic"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -28,32 +28,32 @@ type GormLogger struct {
 func (l *GormLogger) LogMode(level logger.LogLevel) logger.Interface {
 	switch level {
 	case logger.Silent:
-		xylitol.Default.SetLogLevel("fatal")
+		monophonic.Default.SetLogLevel("fatal")
 	case logger.Info:
-		xylitol.Default.SetLogLevel("debug")
+		monophonic.Default.SetLogLevel("debug")
 	case logger.Warn:
-		xylitol.Default.SetLogLevel("warn")
+		monophonic.Default.SetLogLevel("warn")
 	case logger.Error:
-		xylitol.Default.SetLogLevel("error")
+		monophonic.Default.SetLogLevel("error")
 	default:
-		xylitol.Default.SetLogLevel("debug")
+		monophonic.Default.SetLogLevel("debug")
 	}
 	return l
 }
 
 func (l *GormLogger) Info(ctx context.Context, str string, args ...interface{}) {
 	msg := fmt.Sprintf("%s Info: %s", TAG, fmt.Sprintf(str, args...))
-	xylitol.Default.Info(msg)
+	monophonic.Default.Info(msg)
 }
 
 func (l *GormLogger) Warn(ctx context.Context, str string, args ...interface{}) {
 	msg := fmt.Sprintf("%s Warn: %s", TAG, fmt.Sprintf(str, args...))
-	xylitol.Default.Warn(msg)
+	monophonic.Default.Warn(msg)
 }
 
 func (l *GormLogger) Error(ctx context.Context, str string, args ...interface{}) {
 	msg := fmt.Sprintf("%s Error: %s", TAG, fmt.Sprintf(str, args...))
-	xylitol.Default.Error(msg)
+	monophonic.Default.Error(msg)
 }
 
 func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
@@ -72,25 +72,25 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 		// 记录未找到的错误使用 warning 等级
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			msg := fmt.Sprintf("%s %s", TAG, "ErrRecordNotFound")
-			xylitol.Default.Warn(msg, logFields...)
+			monophonic.Default.Warn(msg, logFields...)
 		} else {
 			msg := fmt.Sprintf("%s %s", TAG, "Error")
 			// 其他错误使用 error 等级
 			logFields = append(logFields, zap.Error(err))
-			xylitol.Default.Error(msg, logFields...)
+			monophonic.Default.Error(msg, logFields...)
 		}
 	} else if l.SlowThreshold != 0 && elapsed > l.SlowThreshold {
 		msg := fmt.Sprintf("%s %s", TAG, "Slow Log")
-		xylitol.Default.Warn(msg, logFields...)
+		monophonic.Default.Warn(msg, logFields...)
 	} else {
 		msg := fmt.Sprintf("%s %s", TAG, "Query")
-		xylitol.Default.Debug(msg, logFields...)
+		monophonic.Default.Debug(msg, logFields...)
 	}
 }
 
 func GetGormConfig(level string) *gorm.Config {
 	gormLogger := &GormLogger{}
-	xylitol.Default.SetLogLevel(level)
+	monophonic.Default.SetLogLevel(level)
 	return &gorm.Config{
 		Logger: gormLogger,
 	}

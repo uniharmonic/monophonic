@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/xenochrony/xylitol"
+	"github.com/uniharmonic/monophonic"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -41,7 +41,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 
 				if brokenPipe {
 					// 对于断开的连接，仅记录错误和请求信息，不尝试写入响应状态
-					xylitol.Default.Error(c.Request.URL.Path,
+					monophonic.Default.Error(c.Request.URL.Path,
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
@@ -58,7 +58,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 				if stack {
 					logFields = append(logFields, zap.String("stack", string(debug.Stack())))
 				}
-				xylitol.Default.Error("[Recovery from panic]", logFields...)
+				monophonic.Default.Error("[Recovery from panic]", logFields...)
 
 				// 终止当前请求并返回内部服务器错误状态码
 				c.AbortWithStatus(http.StatusInternalServerError)
